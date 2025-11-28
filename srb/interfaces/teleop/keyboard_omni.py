@@ -1,12 +1,31 @@
 import weakref
 from collections.abc import Callable
+from typing import Tuple
 
 import carb
+import numpy
 import omni
 from isaaclab.devices import Se3Keyboard as __Se3Keyboard
+from isaaclab.devices import Se3KeyboardCfg
 
 
 class OmniKeyboardTeleopInterface(__Se3Keyboard):
+    def __init__(
+        self,
+        pos_sensitivity: float = 1.0,
+        rot_sensitivity: float = 3.1415927,
+    ):
+        super().__init__(
+            Se3KeyboardCfg(
+                pos_sensitivity=pos_sensitivity,
+                rot_sensitivity=rot_sensitivity,
+            )
+        )
+
+    def advance(self) -> Tuple[numpy.ndarray, bool]:
+        command = super().advance()
+        return command[:6].cpu().numpy(), command[6].item() < 0.0
+
     def __str__(self) -> str:
         msg = super().__str__()
 

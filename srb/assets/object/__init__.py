@@ -5,6 +5,7 @@ from .tool import *  # noqa: F403
 
 # isort: split
 
+from .bag import Bag  # noqa: F401
 from .beneficiation_unit import BeneficiationUnit  # noqa: F401
 from .bolt_and_nut import BoltM8, NutM8  # noqa: F401
 from .juggling_ball import JugglingBall  # noqa: F401

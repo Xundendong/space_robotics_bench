@@ -1,8 +1,10 @@
 from dataclasses import MISSING
+from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Literal, Sequence, Tuple
 
 from srb.core.sensor import CameraCfg
 from srb.utils.cfg import configclass
+from srb.utils.path import SRB_LOGS_DIR
 
 if TYPE_CHECKING:
     from srb._typing import AnyEnvCfg
@@ -48,17 +50,29 @@ class VisualExtCfg:
         | None
     ) = ("rgb", "depth")
 
+    ## Recording
+    camera_record: bool = False
+    camera_record_dir: Path | str = SRB_LOGS_DIR.joinpath("camera_videos")
+
     def wrap(self, env_cfg: "AnyEnvCfg"):
         ## Add camera sensors to the scene
         for camera_key, camera_cfg in self.cameras_cfg.items():
             if self.camera_resolution is not None:
-                camera_cfg.width = self.camera_resolution[0]
-                camera_cfg.height = self.camera_resolution[1]
+                if (not isinstance(camera_cfg.width, int) or camera_cfg.width <= 0) or (
+                    not isinstance(camera_cfg.height, int) or camera_cfg.height <= 0
+                ):
+                    camera_cfg.width = self.camera_resolution[0]
+                    camera_cfg.height = self.camera_resolution[1]
             if self.camera_update_period is not None:
-                if self.camera_update_period < 0.0:
-                    camera_cfg.update_period = env_cfg.agent_rate
-                else:
-                    camera_cfg.update_period = self.camera_update_period
+                if camera_cfg.update_period == 0.0:
+                    if self.camera_update_period < 0.0:
+                        camera_cfg.update_period = env_cfg.agent_rate
+                    else:
+                        camera_cfg.update_period = self.camera_update_period
             if self.camera_data_types is not None:
-                camera_cfg.data_types = self.camera_data_types  # type: ignore
+                if (
+                    len(camera_cfg.data_types) == 1
+                    and camera_cfg.data_types[0] == "rgb"
+                ):
+                    camera_cfg.data_types = self.camera_data_types  # type: ignore
             setattr(env_cfg.scene, camera_key, camera_cfg)

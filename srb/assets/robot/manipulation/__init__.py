@@ -15,3 +15,4 @@ from .universal_robots import (  # noqa: F401
     UR10e,
     UR16e,
 )
+from .vispa import Vispa  # noqa: F401

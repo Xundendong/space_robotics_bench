@@ -1,5 +1,5 @@
 from dataclasses import MISSING
-from typing import Sequence
+from typing import Sequence, Tuple
 
 import torch
 
@@ -7,6 +7,7 @@ from srb import assets
 from srb._typing import StepReturn
 from srb.core.asset import (
     Articulation,
+    AssetBase,
     AssetBaseCfg,
     AssetVariant,
     Manipulator,
@@ -22,6 +23,7 @@ from srb.core.env import (
     ManipulationSceneCfg,
 )
 from srb.core.manager import EventTermCfg, SceneEntityCfg
+from srb.core.mdp import push_by_setting_velocity  # noqa: F401
 from srb.core.mdp import reset_root_state_uniform
 from srb.core.sensor import ContactSensor, ContactSensorCfg
 from srb.utils.cfg import configclass
@@ -42,7 +44,7 @@ from srb.utils.math import (
 @configclass
 class SceneCfg(ManipulationSceneCfg):
     bolt: RigidObjectCfg = MISSING  # type: ignore
-    nut: RigidObjectCfg = MISSING  # type: ignore
+    nut: AssetBaseCfg = MISSING  # type: ignore
 
     decor: AssetBaseCfg = assets.Ingenuity().as_asset_base_cfg(
         disable_articulation=True,
@@ -92,6 +94,10 @@ class TaskCfg(ManipulationEnvCfg):
     episode_length_s: float = 15.0
     is_finite_horizon: bool = True
 
+    ## Target
+    tf_pos_target: Tuple[float, float, float] = (0.65, 0.0, 0.493)
+    tf_quat_target: Tuple[float, float, float, float] = (1.0, 0.0, 0.0, 0.0)
+
     def __post_init__(self):
         super().__post_init__()
 
@@ -104,12 +110,8 @@ class TaskCfg(ManipulationEnvCfg):
             raise ValueError("Unsupported bolt type")
         # Scene: Nut
         self.scene.nut = nut.asset_cfg
-        self.scene.nut.prim_path = "{ENV_REGEX_NS}/nut"
-        self.scene.nut.init_state.pos = (
-            0.65,
-            0.0,
-            0.493,
-        )
+        self.scene.nut.prim_path = "/World/nut" if self.stack else "{ENV_REGEX_NS}/nut"
+        self.scene.nut.init_state.pos = self.tf_pos_target
         # Scene: Bolt
         self.scene.bolt = self.bolt.asset_cfg
         self.scene.bolt.prim_path = "{ENV_REGEX_NS}/bolt"
@@ -143,13 +145,19 @@ class Task(ManipulationEnv):
 
         ## Get scene assets
         self._obj: RigidObject = self.scene["bolt"]
-        self._target: RigidObject = self.scene["nut"]
+        self._target: AssetBase = self.scene["nut"]
 
         ## Initialize buffers
         self._offset_pos_bolt_driver_slot = torch.tensor(
             self.cfg.bolt.frame_driver_slot.offset.pos,  # type: ignore
             dtype=torch.float32,
             device=self.device,
+        ).repeat(self.num_envs, 1)
+        self._tf_pos_target = self.scene.env_origins + torch.tensor(
+            self.cfg.tf_pos_target, dtype=torch.float32, device=self.device
+        ).repeat(self.num_envs, 1)
+        self._tf_quat_target = torch.tensor(
+            self.cfg.tf_quat_target, dtype=torch.float32, device=self.device
         ).repeat(self.num_envs, 1)
 
     def _reset_idx(self, env_ids: Sequence[int]):
@@ -193,8 +201,8 @@ class Task(ManipulationEnv):
             tf_quat_end_effector=self._tf_end_effector.data.target_quat_w[:, 0, :],
             tf_pos_obj=self._obj.data.root_pos_w,
             tf_quat_obj=self._obj.data.root_quat_w,
-            tf_pos_target=self._target.data.root_pos_w,
-            tf_quat_target=self._target.data.root_quat_w,
+            tf_pos_target=self._tf_pos_target,
+            tf_quat_target=self._tf_quat_target,
             # Object velocity
             vel_ang_obj=self._obj.data.root_ang_vel_w,
             # Contacts
@@ -337,8 +345,8 @@ def _compute_step_return(
     ## Rewards ##
     #############
     # Penalty: Action rate
-    WEIGHT_ACTION_RATE = -0.05
-    penalty_action_rate = WEIGHT_ACTION_RATE * torch.sum(
+    WEIGHT_ACTION_RATE = -0.5
+    penalty_action_rate = WEIGHT_ACTION_RATE * torch.mean(
         torch.square(act_current - act_previous), dim=1
     )
 

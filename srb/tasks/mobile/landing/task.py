@@ -6,7 +6,7 @@ import torch
 from srb import assets
 from srb._typing import StepReturn
 from srb.core.action import ThrustAction
-from srb.core.asset import AssetVariant, OrbitalRobot, Scenery
+from srb.core.asset import AssetVariant, MobileRobot, OrbitalRobot, Scenery
 from srb.core.domain import Domain
 from srb.core.env import OrbitalEnv, OrbitalEnvCfg, OrbitalEventCfg, OrbitalSceneCfg
 from srb.core.manager import EventTermCfg, SceneEntityCfg
@@ -84,7 +84,7 @@ class TaskCfg(OrbitalEnvCfg):
 
     ## Assets
     robot: OrbitalRobot | AssetVariant = assets.PeregrineLander()
-    scenery: Scenery | AssetVariant | None = AssetVariant.PROCEDURAL
+    scenery: Scenery | MobileRobot | AssetVariant | None = AssetVariant.PROCEDURAL
 
     ## Scene
     scene: SceneCfg = SceneCfg()
@@ -253,8 +253,8 @@ def _compute_step_return(
     ## Rewards ##
     #############
     # Penalty: Action rate
-    WEIGHT_ACTION_RATE = -0.025
-    penalty_action_rate = WEIGHT_ACTION_RATE * torch.sum(
+    WEIGHT_ACTION_RATE = -0.5
+    penalty_action_rate = WEIGHT_ACTION_RATE * torch.mean(
         torch.square(act_current - act_previous), dim=1
     )
 

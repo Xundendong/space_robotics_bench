@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+preferred-citation:
+  type: article
+  title: "Space Robotics Bench: Robot Learning Beyond Earth"
+  authors:
+    - family-names: Orsula
+      given-names: Andrej
+      orcid: https://orcid.org/0000-0003-0706-1191
+    - family-names: Geist
+      given-names: Matthieu
+    - family-names: Olivares-Mendez
+      given-names: Miguel
+      orcid: https://orcid.org/0000-0001-8824-3231
+    - family-names: Martinez
+      given-names: Carol
+      orcid: https://orcid.org/0000-0003-3040-6119
+  year: 2025
+  journal: arXiv:2509.23328
+  doi: 10.48550/arXiv.2509.23328

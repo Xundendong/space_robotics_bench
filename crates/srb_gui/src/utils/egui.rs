@@ -22,7 +22,7 @@ impl ScrollableFramedCentralPanel {
         egui::CentralPanel::default().show(ctx, |ui| {
             // egui::ScrollArea::vertical()
             //     .show(ui, |ui| {
-            let margin_x = (ctx.screen_rect().width() - self.max_content_width).max(0.0) / 2.0;
+            let margin_x = (ctx.content_rect().width() - self.max_content_width).max(0.0) / 2.0;
             let inner_margin = egui::Margin {
                 left: (margin_x as i8).max(self.min_inner_margin.left),
                 right: (margin_x as i8).max(self.min_inner_margin.right),

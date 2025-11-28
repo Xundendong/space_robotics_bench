@@ -1,6 +1,6 @@
 import simforge_foundry
 
-from srb.core.asset import Object, RigidObjectCfg
+from srb.core.asset import AssetBaseCfg, Object, RigidObjectCfg
 from srb.core.sim import (
     CollisionPropertiesCfg,
     MassPropertiesCfg,
@@ -27,13 +27,11 @@ class Peg(Object):
 
 
 class Hole(Object):
-    asset_cfg: RigidObjectCfg = RigidObjectCfg(
+    asset_cfg: AssetBaseCfg = AssetBaseCfg(
         prim_path="{ENV_REGEX_NS}/hole",
         spawn=SimforgeAssetCfg(
             assets=[simforge_foundry.HoleGeo()],
             collision_props=CollisionPropertiesCfg(),
-            # TODO[high]: Do not use kinematic rigid objects
-            rigid_props=RigidBodyPropertiesCfg(kinematic_enabled=True),
         ),
     )
 
@@ -79,7 +77,7 @@ class ShortProfilePeg(Object):
 
 
 class ProfileHole(Object):
-    asset_cfg: RigidObjectCfg = RigidObjectCfg(
+    asset_cfg: AssetBaseCfg = AssetBaseCfg(
         prim_path="{ENV_REGEX_NS}/hole",
         spawn=UsdFileCfg(
             usd_path=(
@@ -88,8 +86,6 @@ class ProfileHole(Object):
                 .as_posix()
             ),
             collision_props=CollisionPropertiesCfg(),
-            # TODO[high]: Do not use kinematic rigid objects
-            rigid_props=RigidBodyPropertiesCfg(kinematic_enabled=True),
             visual_material=PreviewSurfaceCfg(diffuse_color=(0.6, 0.6, 0.6)),
         ),
     )

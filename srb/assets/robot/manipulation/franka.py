@@ -98,7 +98,7 @@ class Franka(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -118,6 +118,7 @@ class Franka(SerialManipulator):
     #             # motion_stiffness_task=250.0,
     #             # motion_damping_ratio_task=1.5,
     #             nullspace_control="position",
+    #             inertial_dynamics_decoupling=True,
     #         ),
     #         nullspace_joint_pos_target="center",
     #         position_scale=0.1,
@@ -137,6 +138,7 @@ class Franka(SerialManipulator):
     #             motion_damping_ratio_task=1.0,
     #             # motion_damping_ratio_task=1.5,
     #             nullspace_control="position",
+    #             inertial_dynamics_decoupling=True,
     #         ),
     #         nullspace_joint_pos_target="center",
     #         position_scale=0.1,
@@ -156,6 +158,7 @@ class Franka(SerialManipulator):
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_limits_task=(0.5, 2.5),
     #             nullspace_control="position",
+    #             inertial_dynamics_decoupling=True,
     #         ),
     #         nullspace_joint_pos_target="center",
     #         position_scale=0.1,
@@ -176,18 +179,18 @@ class Franka(SerialManipulator):
             rot=rpy_to_quat(0.0, 0.0, -45.0),
         ),
     )
+    frame_base_camera: Frame = Frame(
+        prim_relpath="panda_link0/camera_base",
+        offset=Transform(
+            pos=(0.16, 0.0, 0.1),
+            rot=rpy_to_quat(0.0, 55.0, 0.0),
+        ),
+    )
     frame_wrist_camera: Frame = Frame(
         prim_relpath="panda_link7/camera_wrist",
         offset=Transform(
             pos=(0.075, -0.075, 0.1),
             rot=rpy_to_quat(0.0, -80.0, 135.0),
-        ),
-    )
-    frame_base_camera: Frame = Frame(
-        prim_relpath="panda_link0/camera_base",
-        offset=Transform(
-            pos=(0.15, 0.0, 0.1),
-            rot=rpy_to_quat(0.0, 45.0, 0.0),
         ),
     )
     ### ANCHOR_END: example_p4 (docs)

@@ -9,6 +9,7 @@ from srb.core.asset import (
     Articulation,
     AssetVariant,
     ExtravehicularScenery,
+    MobileRobot,
     Object,
     RigidObject,
     RigidObjectCfg,
@@ -28,6 +29,7 @@ from srb.utils.math import (
     deg_to_rad,
     matrix_from_quat,
     rotmat_to_rot6d,
+    rpy_to_quat,
     scale_transform,
     subtract_frame_transforms,
 )
@@ -77,8 +79,11 @@ class TaskCfg(ManipulationEnvCfg):
     domain: Domain = Domain.ORBIT
 
     ## Assets
-    scenery: ExtravehicularScenery | AssetVariant | None = assets.StaticVenusExpress()
-    _scenery: ExtravehicularScenery = MISSING  # type: ignore
+    scenery: ExtravehicularScenery | MobileRobot | AssetVariant | None = (
+        assets.VenusExpress()
+    )
+    scenery.asset_cfg.init_state.pos = (-0.55, 0.0, -0.35)
+    scenery.asset_cfg.init_state.rot = rpy_to_quat(0.0, 0.0, 90.0)
     pedestal: Object | AssetVariant | None = None
     debris: Object | AssetVariant | None = AssetVariant.DATASET
 
@@ -282,8 +287,8 @@ def _compute_step_return(
     ## Rewards ##
     #############
     # Penalty: Action rate
-    WEIGHT_ACTION_RATE = -0.05
-    penalty_action_rate = WEIGHT_ACTION_RATE * torch.sum(
+    WEIGHT_ACTION_RATE = -0.5
+    penalty_action_rate = WEIGHT_ACTION_RATE * torch.mean(
         torch.square(act_current - act_previous), dim=1
     )
 

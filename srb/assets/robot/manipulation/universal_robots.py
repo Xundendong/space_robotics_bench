@@ -79,7 +79,7 @@ class UR3(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -92,14 +92,59 @@ class UR3(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -177,7 +222,7 @@ class UR3e(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -190,14 +235,59 @@ class UR3e(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -275,7 +365,7 @@ class UR5(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -288,14 +378,59 @@ class UR5(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -373,7 +508,7 @@ class UR5e(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -403,14 +538,59 @@ class UR5e(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -507,7 +687,7 @@ class UR10(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -520,14 +700,59 @@ class UR10(SerialManipulator):
     #         body_name="ee_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="ee_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="ee_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -608,7 +833,7 @@ class UR10e(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -621,14 +846,59 @@ class UR10e(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -706,7 +976,7 @@ class UR16e(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -719,14 +989,59 @@ class UR16e(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -804,7 +1119,7 @@ class UR20(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -817,14 +1132,59 @@ class UR20(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -902,7 +1262,7 @@ class UR30(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -915,14 +1275,59 @@ class UR30(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )
@@ -972,7 +1377,7 @@ class RandomURManipulator(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -985,14 +1390,59 @@ class RandomURManipulator(SerialManipulator):
     #         body_name="wrist_3_link",
     #         controller_cfg=OperationalSpaceControllerCfg(
     #             target_types=["pose_rel"],
-    #             impedance_mode="variable_kp",
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
     #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
     #             motion_stiffness_limits_task=(10.0, 250.0),
     #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
     #         ),
+    #         nullspace_joint_pos_target="none",
     #         position_scale=0.1,
     #         orientation_scale=0.1,
     #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=[".*_joint"],
+    #         body_name="wrist_3_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="none",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="none",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
     #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
     #     )
     # )

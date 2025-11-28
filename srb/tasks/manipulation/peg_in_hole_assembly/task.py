@@ -1,11 +1,13 @@
 from dataclasses import MISSING
-from typing import Sequence
+from typing import Sequence, Tuple
 
 import torch
 
 from srb._typing import StepReturn
 from srb.core.asset import (
     Articulation,
+    AssetBase,
+    AssetBaseCfg,
     AssetVariant,
     Object,
     RigidObject,
@@ -18,6 +20,7 @@ from srb.core.env import (
     ManipulationSceneCfg,
 )
 from srb.core.manager import EventTermCfg, SceneEntityCfg
+from srb.core.mdp import push_by_setting_velocity  # noqa: F401
 from srb.core.mdp import reset_root_state_uniform
 from srb.core.sensor import ContactSensor, ContactSensorCfg
 from srb.utils.cfg import configclass
@@ -39,7 +42,7 @@ from .asset import select_peg_in_hole_assembly
 @configclass
 class SceneCfg(ManipulationSceneCfg):
     peg: RigidObjectCfg = MISSING  # type: ignore
-    hole: RigidObjectCfg = MISSING  # type: ignore
+    hole: AssetBaseCfg = MISSING  # type: ignore
 
 
 @configclass
@@ -78,13 +81,17 @@ class TaskCfg(ManipulationEnvCfg):
     episode_length_s: float = 10.0
     is_finite_horizon: bool = True
 
+    ## Target
+    tf_pos_target: Tuple[float, float, float] = (0.5, 0.0, 0.02)
+    tf_quat_target: Tuple[float, float, float, float] = (1.0, 0.0, 0.0, 0.0)
+
     def __post_init__(self):
         super().__post_init__()
 
         # Task setup: Peg-in-hole assembly
         self.peg_in_hole_assembly = select_peg_in_hole_assembly(
             self,
-            init_state=RigidObjectCfg.InitialStateCfg(pos=(0.5, 0.0, 0.02)),
+            init_state=RigidObjectCfg.InitialStateCfg(pos=self.tf_pos_target),
             peg_kwargs={
                 "activate_contact_sensors": True,
             },
@@ -117,7 +124,7 @@ class Task(ManipulationEnv):
 
         ## Get scene assets
         self._obj: RigidObject = self.scene["peg"]
-        self._target: RigidObject = self.scene["hole"]
+        self._target: AssetBase = self.scene["hole"]
 
         ## Initialize buffers
         self._tf_pos_obj_initial = torch.zeros(
@@ -142,6 +149,12 @@ class Task(ManipulationEnv):
             self.cfg.peg_in_hole_assembly.hole.offset_pos_entrance,
             dtype=torch.float32,
             device=self.device,
+        ).repeat(self.num_envs, 1)
+        self._tf_pos_target = self.scene.env_origins + torch.tensor(
+            self.cfg.tf_pos_target, dtype=torch.float32, device=self.device
+        ).repeat(self.num_envs, 1)
+        self._tf_quat_target = torch.tensor(
+            self.cfg.tf_quat_target, dtype=torch.float32, device=self.device
         ).repeat(self.num_envs, 1)
 
     def _reset_idx(self, env_ids: Sequence[int]):
@@ -187,8 +200,8 @@ class Task(ManipulationEnv):
             tf_pos_obj_initial=self._tf_pos_obj_initial,
             tf_pos_obj=self._obj.data.root_pos_w,
             tf_quat_obj=self._obj.data.root_quat_w,
-            tf_pos_target=self._target.data.root_pos_w,
-            tf_quat_target=self._target.data.root_quat_w,
+            tf_pos_target=self._tf_pos_target,
+            tf_quat_target=self._tf_quat_target,
             # Contacts
             contact_forces_robot=self._contacts_robot.data.net_forces_w,  # type: ignore
             contact_forces_end_effector=self._contacts_end_effector.data.net_forces_w
@@ -370,8 +383,8 @@ def _compute_step_return(
     ## Rewards ##
     #############
     # Penalty: Action rate
-    WEIGHT_ACTION_RATE = -0.05
-    penalty_action_rate = WEIGHT_ACTION_RATE * torch.sum(
+    WEIGHT_ACTION_RATE = -0.5
+    penalty_action_rate = WEIGHT_ACTION_RATE * torch.mean(
         torch.square(act_current - act_previous), dim=1
     )
 

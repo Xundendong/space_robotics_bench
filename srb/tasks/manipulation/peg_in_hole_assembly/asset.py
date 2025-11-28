@@ -4,7 +4,7 @@ from pydantic import BaseModel, NonNegativeInt
 from simforge import TexResConfig
 
 from srb import assets
-from srb.core.asset import AssetVariant, RigidObjectCfg
+from srb.core.asset import AssetBaseCfg, AssetVariant, RigidObjectCfg
 from srb.core.sim import SimforgeAssetCfg
 
 if TYPE_CHECKING:
@@ -26,7 +26,7 @@ class PegCfg(BaseModel, arbitrary_types_allowed=True):
 
 
 class HoleCfg(BaseModel):
-    asset_cfg: RigidObjectCfg
+    asset_cfg: AssetBaseCfg
     offset_pos_bottom: Tuple[float, float, float] = (0.0, 0.0, 0.0)
     offset_pos_entrance: Tuple[float, float, float]
 

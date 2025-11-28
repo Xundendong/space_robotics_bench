@@ -1,4 +1,4 @@
-from srb.core.asset import Frame, Object, RigidObjectCfg, Transform
+from srb.core.asset import AssetBaseCfg, Frame, Object, RigidObjectCfg, Transform
 from srb.core.sim import (
     CollisionPropertiesCfg,
     MassPropertiesCfg,
@@ -33,7 +33,7 @@ class BoltM8(Object):
 
 
 class NutM8(Object):
-    asset_cfg: RigidObjectCfg = RigidObjectCfg(
+    asset_cfg: AssetBaseCfg = AssetBaseCfg(
         prim_path="{ENV_REGEX_NS}/hole",
         spawn=UsdFileCfg(
             usd_path=(
@@ -42,12 +42,5 @@ class NutM8(Object):
                 .as_posix()
             ),
             collision_props=CollisionPropertiesCfg(),
-            mesh_collision_props=MeshCollisionPropertiesCfg(
-                mesh_approximation="sdf",
-                sdf_resolution=512,
-            ),
-            # TODO[high]: Do not use kinematic rigid objects
-            rigid_props=RigidBodyPropertiesCfg(kinematic_enabled=True),
-            mass_props=MassPropertiesCfg(mass=0.05),
         ),
     )

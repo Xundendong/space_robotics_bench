@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import numpy
+import numpy as np
 from isaacsim.core.prims import SingleXFormPrim
 from isaacsim.core.utils.articulations import move_articulation_root
 from isaacsim.core.utils.prims import (
@@ -8,9 +9,10 @@ from isaacsim.core.utils.prims import (
     get_prim_at_path,
     is_prim_path_valid,
 )
+from isaacsim.core.utils.stage import get_current_stage
 from isaacsim.core.utils.string import find_unique_string_name
 from isaacsim.robot_setup.assembler import RobotAssembler as __RobotAssembler
-from pxr import Usd, UsdPhysics
+from pxr import Gf, Sdf, Usd, UsdPhysics
 from pydantic import BaseModel
 
 from .assembled_bodies import AssembledBodies
@@ -27,6 +29,7 @@ class RobotAssemblerCfg(BaseModel):
     mask_all_collisions: bool = False
     mask_attached_collisions: bool = True
     disable_root_joints: bool = True
+    refresh_asset_paths: bool = False
 
 
 class RobotAssembler(__RobotAssembler):
@@ -125,3 +128,36 @@ class RobotAssembler(__RobotAssembler):
             assemblage.fixed_joint.GetExcludeFromArticulationAttr().Set(False)
 
         return AssembledRobot(assemblage)
+
+    def create_fixed_joint(
+        self,
+        prim_path: str,
+        target0: str,
+        target1: str,
+        fixed_joint_offset: np.ndarray,
+        fixed_joint_orient: np.ndarray,
+    ) -> UsdPhysics.FixedJoint:  # type: ignore
+        stage = get_current_stage()
+
+        fixed_joint_path = prim_path + "/AssemblerFixedJoint"
+        fixed_joint_path = find_unique_string_name(
+            fixed_joint_path, lambda x: not is_prim_path_valid(x)
+        )
+        fixed_joint = UsdPhysics.FixedJoint.Define(stage, fixed_joint_path)  # type: ignore
+
+        fixed_joint_prim = fixed_joint.GetPrim()
+        fixed_joint_prim.GetRelationship("physics:body0").SetTargets(
+            [Sdf.Path(target0)]
+        )
+        fixed_joint_prim.GetRelationship("physics:body1").SetTargets(
+            [Sdf.Path(target1)]
+        )
+
+        fixed_joint.GetLocalPos0Attr().Set(Gf.Vec3f(*fixed_joint_offset.astype(float)))
+        fixed_joint.GetLocalRot0Attr().Set(Gf.Quatf(*fixed_joint_orient.astype(float)))
+        fixed_joint.GetLocalPos1Attr().Set(Gf.Vec3f(*np.zeros(3).astype(float)))
+        fixed_joint.GetLocalRot1Attr().Set(
+            Gf.Quatf(*np.array([1, 0, 0, 0]).astype(float))
+        )
+
+        return fixed_joint

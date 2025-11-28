@@ -5,6 +5,76 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.6] - 2025-10-29
+
+### Added
+- Add support for deformable objects ([0e04efe](https://github.com/AndrejOrsula/space_robotics_bench/commit/0e04efe4c19e9c4fea23b6a07a53d41dfcee2799)) by @AndrejOrsula
+- Docs: Add citation file ([7b0ace5](https://github.com/AndrejOrsula/space_robotics_bench/commit/7b0ace565f66d263274a08046352c7c2c46f30bb)) by @AndrejOrsula
+- Add support for recording all camera streams across all envs ([17c2319](https://github.com/AndrejOrsula/space_robotics_bench/commit/17c231986dd56d749af6ab7b0cadf65b7adfef4f)) by @AndrejOrsula
+- Orbital_waypoint_navigation: Add task ([8aeead6](https://github.com/AndrejOrsula/space_robotics_bench/commit/8aeead6271da116cc4c17c9fe2a0717de11df30b)) by @AndrejOrsula
+- Vscode: Add SimForge and SimForge Foundry to extra analysis paths ([343aae8](https://github.com/AndrejOrsula/space_robotics_bench/commit/343aae8753fe60e87bfedf5b95993fb3fa0387c3)) by @AndrejOrsula
+- Add pymoveit2 hardware interfaces ([37c0b47](https://github.com/AndrejOrsula/space_robotics_bench/commit/37c0b47738d135cf2e032a35d44a2618dc5605be)) by @AndrejOrsula
+- Add dummy hardware interface ([5a5df7e](https://github.com/AndrejOrsula/space_robotics_bench/commit/5a5df7e7651676f2ac8271644144202430fe0a18)) by @AndrejOrsula
+- Add support for using mobile robots as sceneries ([b384a77](https://github.com/AndrejOrsula/space_robotics_bench/commit/b384a7725402bd177befcbbdfa96d3213d6da136)) by @AndrejOrsula
+- Add performance metrics to RealEnv ([53511c5](https://github.com/AndrejOrsula/space_robotics_bench/commit/53511c59e510f38b9f5079f314ad25b8c5a10e4b)) by @AndrejOrsula
+
+### Changed
+- Bump to 0.0.6 ([8b76796](https://github.com/AndrejOrsula/space_robotics_bench/commit/8b767969515176a718f03907afc4db450eaca667)) by @AndrejOrsula
+- Waypoint_navigation: Reduce maximum waypoint velocity ([de1edef](https://github.com/AndrejOrsula/space_robotics_bench/commit/de1edef984d955531168a76cd1239532ea7a633e)) by @AndrejOrsula
+- Update assets ([89ca3de](https://github.com/AndrejOrsula/space_robotics_bench/commit/89ca3deb2d9c3e97a51319df0b059e4d774bc87b)) by @AndrejOrsula
+- Change kinematic rigid objects to static objects ([b5dc6f5](https://github.com/AndrejOrsula/space_robotics_bench/commit/b5dc6f5409bab7d5e245098d5930e75d10f90c21)) by @AndrejOrsula
+- Docs: Ensure Blender installation symlink is possible ([03b1d78](https://github.com/AndrejOrsula/space_robotics_bench/commit/03b1d7810b30a22f38d53868f2140a442eadbd9c)) by @AndrejOrsula
+- Build(deps): bump home from 0.5.11 to 0.5.12 ([b8ef26c](https://github.com/AndrejOrsula/space_robotics_bench/commit/b8ef26cd93819edfb9b431a613aab787a922084e)) by @dependabot[bot] in [#106](https://github.com/AndrejOrsula/space_robotics_bench/pull/106)
+- Build(deps): bump astral-sh/setup-uv from 6 to 7 ([fb87c3e](https://github.com/AndrejOrsula/space_robotics_bench/commit/fb87c3e3d6509551e130f5044279feb82d7487b1)) by @dependabot[bot] in [#103](https://github.com/AndrejOrsula/space_robotics_bench/pull/103)
+- Docker: Skip building ROS 2 examples/demos/tutorials ([a38e021](https://github.com/AndrejOrsula/space_robotics_bench/commit/a38e0210a9dcd8963d35a79e24707fcb5857a61c)) by @AndrejOrsula
+- CLI: Make --env argparse choices permissive ([3d410fd](https://github.com/AndrejOrsula/space_robotics_bench/commit/3d410fdec31fca902e1c406edaa4974066af2b81)) by @AndrejOrsula
+- Install: Ensure vendored Python of Isaac Sim has pip ([b5f1d19](https://github.com/AndrejOrsula/space_robotics_bench/commit/b5f1d19688ae27eb261f883b214e3964643089cd)) by @AndrejOrsula
+- Docs: Update to Blender 4.5 ([15977a8](https://github.com/AndrejOrsula/space_robotics_bench/commit/15977a888691f9f3b3e0681a7f0bf30fb0b5add3)) by @AndrejOrsula
+- Update tasks ([723e1f6](https://github.com/AndrejOrsula/space_robotics_bench/commit/723e1f6229006c31358f6a6ddf4f9a87e478e8d3)) by @AndrejOrsula
+- Update assets ([79ed399](https://github.com/AndrejOrsula/space_robotics_bench/commit/79ed399d9df8c88fa0520ce61e793a2f0a558dd0)) by @AndrejOrsula
+- Update natural trajectory generation event ([e91da20](https://github.com/AndrejOrsula/space_robotics_bench/commit/e91da207c5cd7c2b0e6a30c2248548887963575d)) by @AndrejOrsula
+- Update particle settling event ([3dfc5d5](https://github.com/AndrejOrsula/space_robotics_bench/commit/3dfc5d5826efa09cbef61c44458e2cda09028906)) by @AndrejOrsula
+- Update default onboard camera for orbital envs ([a3704f9](https://github.com/AndrejOrsula/space_robotics_bench/commit/a3704f9d44251e6dbf123ed8c073be2d5753858d)) by @AndrejOrsula
+- Update debug vis marker scaling for thrusters ([3c8392a](https://github.com/AndrejOrsula/space_robotics_bench/commit/3c8392aac3760fa27dd0908d98ee5d9b43ebe168)) by @AndrejOrsula
+- Replace deprecated quat ops with alternatives ([383bca5](https://github.com/AndrejOrsula/space_robotics_bench/commit/383bca554ea90b3b41deebe06cc89f570e489617)) by @AndrejOrsula
+- Dreamer: Set XLA performance flags ([5c15826](https://github.com/AndrejOrsula/space_robotics_bench/commit/5c15826af2355d0d8c63e274b9fa32b2100fba4c)) by @AndrejOrsula
+- CLI: Update config handling ([1320a04](https://github.com/AndrejOrsula/space_robotics_bench/commit/1320a046262d552628fc094f5a6f9ca260267cc9)) by @AndrejOrsula
+- Decrease default history of Savitzky-Golay action smoothing filter ([4352726](https://github.com/AndrejOrsula/space_robotics_bench/commit/43527261688a7d755acabf26e5fabcaf55ad8981)) by @AndrejOrsula
+- Docker: Update for Isaac Sim 5.0 ([cd17e3f](https://github.com/AndrejOrsula/space_robotics_bench/commit/cd17e3f18be3185693db5b879e9b1fc2aa64a6a7)) by @AndrejOrsula
+- Update dependencies ([c1ad14b](https://github.com/AndrejOrsula/space_robotics_bench/commit/c1ad14b2cf088ddc20b88275723ce735c21a07e7)) by @AndrejOrsula
+- Disable ambient light intensity from rendering modes ([29604d2](https://github.com/AndrejOrsula/space_robotics_bench/commit/29604d223b8ade35a446cfc8417b2f458f8b5a5e)) by @AndrejOrsula
+- Update to Isaac Sim 5.0 ([0bd8c16](https://github.com/AndrejOrsula/space_robotics_bench/commit/0bd8c1631ba4cc6f4acfa61d9ff4d46ab50a3e4b)) by @AndrejOrsula
+- Build(deps): bump const_format from 0.2.34 to 0.2.35 ([c3f0908](https://github.com/AndrejOrsula/space_robotics_bench/commit/c3f09081ef1d70872012099167df6b379335b16d)) by @dependabot[bot] in [#97](https://github.com/AndrejOrsula/space_robotics_bench/pull/97)
+- Build(deps): bump sysinfo from 0.37.1 to 0.37.2 ([f98657c](https://github.com/AndrejOrsula/space_robotics_bench/commit/f98657c11c1e845ff21c2a49e7548f78fb068752)) by @dependabot[bot] in [#98](https://github.com/AndrejOrsula/space_robotics_bench/pull/98)
+- Build(deps): bump sysinfo from 0.37.0 to 0.37.1 ([bf9e15d](https://github.com/AndrejOrsula/space_robotics_bench/commit/bf9e15d210a208b2a5eb65262d332ee86ee112ba)) by @dependabot[bot] in [#96](https://github.com/AndrejOrsula/space_robotics_bench/pull/96)
+- Build(deps): bump serde from 1.0.226 to 1.0.228 ([65d278b](https://github.com/AndrejOrsula/space_robotics_bench/commit/65d278bb1d7e916b8d062e6b9b9758e5365f9b48)) by @dependabot[bot] in [#95](https://github.com/AndrejOrsula/space_robotics_bench/pull/95)
+- Build(deps): bump serde from 1.0.223 to 1.0.226 ([4ec9329](https://github.com/AndrejOrsula/space_robotics_bench/commit/4ec9329ff6222cc83aa678e799752fccac5d2f48)) by @dependabot[bot] in [#93](https://github.com/AndrejOrsula/space_robotics_bench/pull/93)
+- Build(deps): bump eframe from 0.32.2 to 0.32.3 ([97b7e18](https://github.com/AndrejOrsula/space_robotics_bench/commit/97b7e1834aeadf33a8bb5501a7fc0ef34fb8eee3)) by @dependabot[bot] in [#94](https://github.com/AndrejOrsula/space_robotics_bench/pull/94)
+- Build(deps): bump serde_json from 1.0.143 to 1.0.145 ([8f514e5](https://github.com/AndrejOrsula/space_robotics_bench/commit/8f514e5520e2d878de98cc8dd0037d3eb5ce14a1)) by @dependabot[bot] in [#92](https://github.com/AndrejOrsula/space_robotics_bench/pull/92)
+- Build(deps): bump egui from 0.32.2 to 0.32.3 ([48d4d4d](https://github.com/AndrejOrsula/space_robotics_bench/commit/48d4d4d47daf6a3073b57ac5e7334e62a34cc429)) by @dependabot[bot] in [#91](https://github.com/AndrejOrsula/space_robotics_bench/pull/91)
+- Build(deps): bump typed-builder from 0.21.2 to 0.22.0 ([4385e57](https://github.com/AndrejOrsula/space_robotics_bench/commit/4385e5780aa302bd470ecfad89741c98c36187b0)) by @dependabot[bot] in [#90](https://github.com/AndrejOrsula/space_robotics_bench/pull/90)
+- Build(deps): bump serde from 1.0.219 to 1.0.223 ([135ca1b](https://github.com/AndrejOrsula/space_robotics_bench/commit/135ca1b6380384fe4d3b9207ea4b5c54471467f4)) by @dependabot[bot] in [#89](https://github.com/AndrejOrsula/space_robotics_bench/pull/89)
+- Build(deps): bump egui_extras from 0.32.2 to 0.32.3 ([d6e53b8](https://github.com/AndrejOrsula/space_robotics_bench/commit/d6e53b873a9d3a4dc3a2f8da6799f23a6a4f6636)) by @dependabot[bot] in [#88](https://github.com/AndrejOrsula/space_robotics_bench/pull/88)
+- Build(deps): bump eframe from 0.32.1 to 0.32.2 ([98123ae](https://github.com/AndrejOrsula/space_robotics_bench/commit/98123ae0be1246b3da2deed8fb060147aa1b9660)) by @dependabot[bot] in [#82](https://github.com/AndrejOrsula/space_robotics_bench/pull/82)
+- Build(deps): bump tracing-subscriber from 0.3.19 to 0.3.20 ([c6715f3](https://github.com/AndrejOrsula/space_robotics_bench/commit/c6715f392762c73b3060e90c6d4339dcbc27b498)) by @dependabot[bot] in [#84](https://github.com/AndrejOrsula/space_robotics_bench/pull/84)
+- Build(deps): bump image from 0.25.6 to 0.25.8 ([79a4563](https://github.com/AndrejOrsula/space_robotics_bench/commit/79a4563760702fe3739765d8ff4fb91783c79923)) by @dependabot[bot] in [#81](https://github.com/AndrejOrsula/space_robotics_bench/pull/81)
+- Build(deps): bump egui_extras from 0.32.1 to 0.32.2 ([95bd32e](https://github.com/AndrejOrsula/space_robotics_bench/commit/95bd32e748ccfc97cd5128f64c4f350b2e3cad72)) by @dependabot[bot] in [#83](https://github.com/AndrejOrsula/space_robotics_bench/pull/83)
+- Build(deps): bump chrono from 0.4.41 to 0.4.42 ([401217f](https://github.com/AndrejOrsula/space_robotics_bench/commit/401217fa5c8f793d423fa1992f48d7008005bf15)) by @dependabot[bot] in [#80](https://github.com/AndrejOrsula/space_robotics_bench/pull/80)
+- Build(deps): bump actions/setup-python from 5 to 6 ([00fa7a3](https://github.com/AndrejOrsula/space_robotics_bench/commit/00fa7a39d411a5e05416ac28096883bde070e700)) by @dependabot[bot] in [#79](https://github.com/AndrejOrsula/space_robotics_bench/pull/79)
+- Build(deps): bump typed-builder from 0.21.1 to 0.21.2 ([237eadf](https://github.com/AndrejOrsula/space_robotics_bench/commit/237eadfab51f869e2c3b003e59b7b5e1bf03a454)) by @dependabot[bot] in [#77](https://github.com/AndrejOrsula/space_robotics_bench/pull/77)
+- Build(deps): bump serde_json from 1.0.142 to 1.0.143 ([0be3e8c](https://github.com/AndrejOrsula/space_robotics_bench/commit/0be3e8ca2357b5cd9900b33a7cbff25f748a2ecf)) by @dependabot[bot] in [#78](https://github.com/AndrejOrsula/space_robotics_bench/pull/78)
+- Build(deps): bump actions/upload-pages-artifact from 3 to 4 ([99b3450](https://github.com/AndrejOrsula/space_robotics_bench/commit/99b3450ff9c90a8b5cda1d835edd0d9ec01a93b3)) by @dependabot[bot] in [#76](https://github.com/AndrejOrsula/space_robotics_bench/pull/76)
+- Docker: Make xauth unique for each user ([0c62ab4](https://github.com/AndrejOrsula/space_robotics_bench/commit/0c62ab4dab633a1e3c902eda928334787f2532ed)) by @AndrejOrsula
+- Build(deps): bump actions/checkout from 4 to 5 ([53c95de](https://github.com/AndrejOrsula/space_robotics_bench/commit/53c95de464daf52cee4ce9b733118113af329b6d)) by @dependabot[bot] in [#75](https://github.com/AndrejOrsula/space_robotics_bench/pull/75)
+
+### Fixed
+- Fix keyboard teleop interface for Isaac Lab 2.2 ([4d79702](https://github.com/AndrejOrsula/space_robotics_bench/commit/4d79702c8554a63a18ad81b508399374737c7c88)) by @AndrejOrsula
+- Fix RobotAssembler for Isaac Sim 5.0 ([28a5770](https://github.com/AndrejOrsula/space_robotics_bench/commit/28a57700dde4cd3c1c4e53cac33ae7acbf281c6d)) by @AndrejOrsula
+- Fix using mobile robots as static pedestals ([207156e](https://github.com/AndrejOrsula/space_robotics_bench/commit/207156e949bf1b6d68daddd96cca397197441978)) by @AndrejOrsula
+- Fix support for most camera streams ([254ea44](https://github.com/AndrejOrsula/space_robotics_bench/commit/254ea4440b83327544814847d0b9df6be3bca5ae)) by @AndrejOrsula
+- Dreamer: Fix wrapper for inference with multi-dim obs ([f7dfdf8](https://github.com/AndrejOrsula/space_robotics_bench/commit/f7dfdf86748aa2ababaaf92c01aab9879148803d)) by @AndrejOrsula
+- Devcontainer: Fix XAUTHORITY on systems with multiple users ([b1f8bdc](https://github.com/AndrejOrsula/space_robotics_bench/commit/b1f8bdcc63b94c08e2dd0721192c92e2f46984f0)) by @AndrejOrsula
+
 ## [0.0.5] - 2025-08-17
 
 ### Added
@@ -20,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docs: Add missing videos for RL workflow ([75de328](https://github.com/AndrejOrsula/space_robotics_bench/commit/75de328c6089988d2c3fef12f3f485a3a03966a2)) by @AndrejOrsula
 
 ### Changed
+- Bump to 0.0.5 ([a06c086](https://github.com/AndrejOrsula/space_robotics_bench/commit/a06c086b160bcaaabb43e86e4c7e71cd3c73e9ae)) by @AndrejOrsula
 - Bump MSRV to 1.88 ([cea6f7d](https://github.com/AndrejOrsula/space_robotics_bench/commit/cea6f7d60032f160ef9a961044c385134b9f7658)) by @AndrejOrsula
 - Docs: Enhance troubleshooting ([8789a23](https://github.com/AndrejOrsula/space_robotics_bench/commit/8789a2399124024dcf23233a230ead70e715bd3b)) by @AndrejOrsula
 - CLI: Update with sim-to-real workflows ([fd0d9a2](https://github.com/AndrejOrsula/space_robotics_bench/commit/fd0d9a27b0df6cda9566e362ea3ab6d35b26196d)) by @AndrejOrsula
@@ -319,6 +390,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## New Contributors
 * @AndrejOrsula made their first contribution
 * @dependabot[bot] made their first contribution in [#46](https://github.com/AndrejOrsula/space_robotics_bench/pull/46)
+[0.0.6]: https://github.com/AndrejOrsula/space_robotics_bench/compare/0.0.5..0.0.6
 [0.0.5]: https://github.com/AndrejOrsula/space_robotics_bench/compare/0.0.4..0.0.5
 [0.0.4]: https://github.com/AndrejOrsula/space_robotics_bench/compare/0.0.3..0.0.4
 [0.0.3]: https://github.com/AndrejOrsula/space_robotics_bench/compare/0.0.2..0.0.3

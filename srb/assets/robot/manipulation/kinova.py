@@ -17,7 +17,6 @@ from srb.core.sim import (
     UsdFileCfg,
 )
 from srb.utils.math import deg_to_rad, rpy_to_quat
-from srb.utils.nucleus import ISAAC_NUCLEUS_DIR
 from srb.utils.path import SRB_ASSETS_DIR_SRB_ROBOT
 
 
@@ -85,7 +84,7 @@ class KinovaJ2n6s(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -181,7 +180,7 @@ class KinovaJ2n7s(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
@@ -212,13 +211,14 @@ class KinovaJ2n7s(SerialManipulator):
     )
 
 
-# TODO[low]: Fix Kinova Gen3 with end-effectors (no idea why it fails to find rigid body/articulation for end-effector)
 class KinovaGen3n7(SerialManipulator):
     ## Model
     asset_cfg: ArticulationCfg = ArticulationCfg(
         prim_path="{ENV_REGEX_NS}/kinova_gen3",
         spawn=UsdFileCfg(
-            usd_path=f"{ISAAC_NUCLEUS_DIR}/Robots/Kinova/Gen3/gen3n7_instanceable.usd",
+            usd_path=SRB_ASSETS_DIR_SRB_ROBOT.joinpath("manipulator")
+            .joinpath("kinova_gen3n7.usdz")
+            .as_posix(),
             activate_contact_sensors=True,
             collision_props=CollisionPropertiesCfg(
                 contact_offset=0.005, rest_offset=0.0
@@ -252,8 +252,8 @@ class KinovaGen3n7(SerialManipulator):
                     "joint_[5-7]": 540.0,
                 },
                 velocity_limit=10.0,
-                stiffness=1000.0,
-                damping=100.0,
+                stiffness=500.0,
+                damping=200.0,
             ),
         },
     )
@@ -268,29 +268,97 @@ class KinovaGen3n7(SerialManipulator):
             controller=DifferentialIKControllerCfg(
                 command_type="pose",
                 use_relative_mode=True,
-                ik_method="svd",
+                ik_method="dls",
             ),
             scale=0.1,
             body_offset=DifferentialInverseKinematicsActionCfg.OffsetCfg(),
         ),
     )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=["joint_[1-7]"],
+    #         body_name="end_effector_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="fixed",
+    #             motion_stiffness_task=100.0,
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_stiffness_task=250.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="position",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="center",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=["joint_[1-7]"],
+    #         body_name="end_effector_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable_kp",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_task=1.0,
+    #             # motion_damping_ratio_task=1.5,
+    #             nullspace_control="position",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="center",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
+    # actions: ActionGroup = OperationalSpaceControlActionGroup(
+    #     OperationalSpaceControllerActionCfg(
+    #         asset_name="robot",
+    #         joint_names=["joint_[1-7]"],
+    #         body_name="end_effector_link",
+    #         controller_cfg=OperationalSpaceControllerCfg(
+    #             target_types=["pose_rel"],
+    #             impedance_mode="variable",
+    #             motion_stiffness_limits_task=(10.0, 250.0),
+    #             motion_damping_ratio_limits_task=(0.5, 2.5),
+    #             nullspace_control="position",
+    #             inertial_dynamics_decoupling=True,
+    #         ),
+    #         nullspace_joint_pos_target="center",
+    #         position_scale=0.1,
+    #         orientation_scale=0.1,
+    #         stiffness_scale=120.0,
+    #         damping_ratio_scale=1.0,
+    #         body_offset=OperationalSpaceControllerActionCfg.OffsetCfg(),
+    #     )
+    # )
 
     ## Frames
-    frame_base: Frame = Frame(prim_relpath="base_link")
+    frame_base: Frame = Frame(
+        prim_relpath="base_link",
+    )
     frame_flange: Frame = Frame(
         prim_relpath="end_effector_link",
+        offset=Transform(
+            rot=rpy_to_quat(0.0, 0.0, 90.0),
+        ),
     )
     frame_base_camera: Frame = Frame(
         prim_relpath="base_link/camera_base",
         offset=Transform(
-            pos=(0.06, 0.0, 0.15),
-            rot=rpy_to_quat(0.0, -10.0, 0.0),
+            pos=(0.16, 0.0, 0.1),
+            rot=rpy_to_quat(0.0, 55.0, 0.0),
         ),
     )
     frame_wrist_camera: Frame = Frame(
         prim_relpath="end_effector_link/camera_wrist",
         offset=Transform(
-            pos=(0.07, 0.0, 0.05),
-            rot=rpy_to_quat(0.0, -60.0, 180.0),
+            pos=(0.0, 0.061, -0.003),
+            rot=rpy_to_quat(90.0, -90.0, 180.0),
         ),
     )

@@ -1,3 +1,5 @@
+import logging
+from itertools import chain
 from typing import TYPE_CHECKING, Dict, List, Sequence, Tuple
 
 import torch
@@ -8,12 +10,19 @@ import srb.core.sim.spawners.particles.utils as particle_utils
 from srb.core.asset import (
     Articulation,
     AssetBase,
+    DeformableObject,
     RigidObject,
     RigidObjectCollection,
     XFormPrim,
 )
 from srb.core.manager import SceneEntityCfg
-from srb.utils.math import quat_from_angle_axis, quat_from_euler_xyz, quat_mul, slerp
+from srb.utils.math import (
+    quat_from_angle_axis,
+    quat_from_euler_xyz,
+    quat_mul,
+    slerp,
+    transform_nodal_pos,
+)
 from srb.utils.sampling import (
     sample_poisson_disk_2d_looped,
     sample_poisson_disk_3d_looped,
@@ -248,6 +257,7 @@ def offset_pose_natural(
     pos_axes: Sequence[str],
     pos_step_range: Tuple[float, float],
     pos_smoothness: float,
+    pos_step_smoothness: float,
     pos_bounds: Dict[str, Tuple[float, float]],
     orient_yaw_only: bool,
     orient_smoothness: float,
@@ -261,6 +271,7 @@ def offset_pose_natural(
         pos_axes: Which position axes to apply movement to (e.g., ["x", "y"])
         pos_step_range: Range of position step sizes per update
         pos_smoothness: Value between 0-1 controlling continuity of movement (higher = smoother)
+        pos_step_smoothness: Value between 0-1 controlling continuity of velocity (higher = smoother)
         pos_bounds: Dictionary of position bounds for each axis
         orient_yaw_only: If True, only the yaw of the orientation will be updated to match the direction of movement.
         orient_smoothness: Value between 0-1 controlling continuity of orientation (higher = smoother)
@@ -285,11 +296,27 @@ def offset_pose_natural(
         p=2,
         dim=1,
     )
-    pos_step_sizes = sample_uniform(
+
+    # -- Handle Velocity --
+    step_size_state_key = f"__{env_attr_name}_natural_movement_step_sizes"
+    if not hasattr(_env, step_size_state_key):
+        pos_step_sizes = sample_uniform(
+            pos_step_range[0], pos_step_range[1], (_env.num_envs,), device=_env.device
+        )
+        setattr(_env, step_size_state_key, pos_step_sizes)
+
+    last_pos_step_sizes = getattr(_env, step_size_state_key)[env_ids]
+    new_random_step = sample_uniform(
         pos_step_range[0], pos_step_range[1], (len(env_ids),), device=_env.device
     )
+    pos_step_sizes = (
+        pos_step_smoothness * last_pos_step_sizes
+        + (1 - pos_step_smoothness) * new_random_step
+    )
+
     delta_pos = pos_velocities * pos_step_sizes.unsqueeze(1)
     getattr(_env, pos_state_key)[env_ids] = pos_velocities
+    getattr(_env, step_size_state_key)[env_ids] = pos_step_sizes
 
     # -- Apply changes --
     pose_attr = getattr(env, env_attr_name)
@@ -960,9 +987,10 @@ def settle_and_reset_particles(
     env: "AnyEnv",
     env_ids: torch.Tensor,
     asset_cfg: Sequence[SceneEntityCfg],
-    particles_settle_max_steps: int = 25,
-    particles_settle_step_time: float = 20.0,
-    particles_settle_vel_threshold: float = 0.0025,
+    particles_settle_max_steps: int = 10,
+    particles_settle_step_time: float = 30.0,
+    particles_settle_vel_threshold: float = 0.01,
+    particles_settle_min_vel_change_threshold: float = 0.0005,
 ):
     num_particle_systems = len(asset_cfg)
     particles: Sequence[AssetBase] = tuple(env.scene[cfg.name] for cfg in asset_cfg)
@@ -975,23 +1003,79 @@ def settle_and_reset_particles(
 
     ## Let the particles settle on the first reset, then remember their positions for future resets
     if not hasattr(env, initial_pos_ident[0]):
-        for _ in range(particles_settle_max_steps):
+        # Evacuate the scene by moving all dynamic assets far away
+        for asset in chain(
+            env.scene.articulations.values(), env.scene.rigid_objects.values()
+        ):
+            new_state = asset.data.default_root_state.clone()
+            new_state[:, 2] -= 10000.0
+            asset.write_root_state_to_sim(new_state)
+        for collection in env.scene.rigid_object_collections.values():
+            new_state = collection.data.default_object_state.clone()
+            new_state[:, :, 2] -= 10000.0
+            collection.write_object_state_to_sim(new_state)
+
+        # Let the particles settle
+        logging.info("Letting particles settle, please be patient...")
+        # Initialize previous median velocity norms for each particle system
+        prev_particles_vel_norm_median = [
+            torch.full((), float("inf"), device=env_ids.device)
+            for _ in range(num_particle_systems)
+        ]
+
+        for i in range(particles_settle_max_steps):
             for _ in range(round(particles_settle_step_time / env.step_dt)):
                 env.sim.step(render=False)
 
-            for i in range(num_particle_systems):
+            for j in range(num_particle_systems):
+                particles_vel = particle_utils.get_particles_vel_w(env, particles[j])
+                particles_vel_norm_median = torch.median(
+                    torch.linalg.norm(particles_vel, dim=-1)
+                )
+                num_particles = particles_vel.shape[1]
+
+                vel_change = torch.abs(
+                    particles_vel_norm_median - prev_particles_vel_norm_median[j]
+                )
+                prev_particles_vel_norm_median[j] = particles_vel_norm_median
+
+                # A system is unsettled if velocity is high AND the change is not minimal
                 if (
-                    torch.median(
-                        torch.linalg.norm(
-                            particle_utils.get_particles_vel_w(env, particles[i]),
-                            dim=-1,
-                        )
-                    )
-                    > particles_settle_vel_threshold
+                    particles_vel_norm_median > particles_settle_vel_threshold
+                    and vel_change > particles_settle_min_vel_change_threshold
                 ):
+                    logging.info(
+                        f"[{i + 1}/{particles_settle_max_steps}] Particles of system "
+                        f"{j + 1}/{num_particle_systems} are not yet settled (count: {num_particles}, "
+                        f"vel: {particles_vel_norm_median:.5f}>{particles_settle_vel_threshold:.5f}, "
+                        f"vel_change: {vel_change:.5f}>{particles_settle_min_vel_change_threshold:.5f})"
+                    )
                     break
+                else:
+                    if particles_vel_norm_median <= particles_settle_vel_threshold:
+                        logging.info(
+                            f"[{i + 1}/{particles_settle_max_steps}] Particles of system "
+                            f"{j + 1}/{num_particle_systems} are now settled (count: {num_particles}, "
+                            f"vel: {particles_vel_norm_median:.5f}<{particles_settle_vel_threshold:.5f})"
+                        )
+                    else:
+                        logging.info(
+                            f"[{i + 1}/{particles_settle_max_steps}] Particles of system "
+                            f"{j + 1}/{num_particle_systems} are settled due to minimal velocity change "
+                            f"(count: {num_particles}, vel_change: {vel_change:.5f}<"
+                            f"{particles_settle_min_vel_change_threshold:.5f})"
+                        )
             else:
+                logging.info("All particle systems have settled.")
                 break
+
+        # Restore the original states
+        for asset in chain(
+            env.scene.articulations.values(), env.scene.rigid_objects.values()
+        ):
+            asset.write_root_state_to_sim(asset.data.default_root_state)
+        for collection in env.scene.rigid_object_collections.values():
+            collection.write_object_state_to_sim(collection.data.default_object_state)
 
         # Extract statistics about the initial state of the particles
         for i in range(num_particle_systems):
@@ -1012,3 +1096,72 @@ def settle_and_reset_particles(
                 getattr(env, initial_vel_ident[i]),
                 env_ids=env_ids,  # type: ignore
             )
+
+
+def reset_deformable_root_state_uniform(
+    env: "AnyEnv",
+    env_ids: torch.Tensor,
+    pose_range: dict[str, tuple[float, float]],
+    velocity_range: dict[str, tuple[float, float]],
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+):
+    """Reset the asset root state to a random position and velocity uniformly within the given ranges.
+
+    This function randomizes the root position and velocity of the asset.
+
+    * It samples the root position from the given ranges and adds them to the default root position, before setting
+      them into the physics simulation.
+    * It samples the root orientation from the given ranges and sets them into the physics simulation.
+    * It samples the root velocity from the given ranges and sets them into the physics simulation.
+
+    The function takes a dictionary of pose and velocity ranges for each axis and rotation. The keys of the
+    dictionary are ``x``, ``y``, ``z``, ``roll``, ``pitch``, and ``yaw``. The values are tuples of the form
+    ``(min, max)``. If the dictionary does not contain a key, the position or velocity is set to zero for that axis.
+    """
+    asset: DeformableObject = env.scene[asset_cfg.name]
+    nodal_state = asset.data.default_nodal_state_w[env_ids].clone()
+
+    # Pose
+    ranges = torch.tensor(
+        tuple(
+            pose_range.get(key, (0.0, 0.0))
+            for key in ("x", "y", "z", "roll", "pitch", "yaw")
+        ),
+        device=asset.device,
+        dtype=torch.float32,
+    )
+    rand_samples = sample_uniform(
+        ranges[:, 0], ranges[:, 1], (len(env_ids), 6), device=asset.device
+    )
+    orientations_delta = quat_from_euler_xyz(
+        rand_samples[:, 3], rand_samples[:, 4], rand_samples[:, 5]
+    )
+    nodal_state[..., :3] = transform_nodal_pos(
+        nodal_state[..., :3],
+        pos=rand_samples[:, 0:3],
+        quat=orientations_delta,
+    )
+
+    # Velocity
+    ranges = torch.tensor(
+        tuple(
+            velocity_range.get(key, (0.0, 0.0))
+            for key in (
+                "x",
+                "y",
+                "z",
+            )
+        ),
+        device=asset.device,
+        dtype=torch.float32,
+    )
+    velocities_delta = sample_uniform(
+        ranges[:, 0], ranges[:, 1], (len(env_ids), 3), device=asset.device
+    )
+    nodal_state[..., 3:6] = velocities_delta.unsqueeze(1)
+
+    asset.write_nodal_state_to_sim(
+        nodal_state,
+        env_ids=env_ids,  # type: ignore
+    )
+    asset.reset(env_ids=env_ids)  # type: ignore

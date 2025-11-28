@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Sequence
 
 import torch
 
@@ -26,6 +26,10 @@ class VisualTask(VisualExt, Task):
         Task.__init__(self, cfg, **kwargs)
         VisualExt.__init__(self, cfg, **kwargs)
 
+    def _reset_idx(self, env_ids: Sequence[int]):
+        Task._reset_idx(self, env_ids)
+        VisualExt._reset_idx(self, env_ids)
+
     def _get_observations(self) -> Dict[str, torch.Tensor]:
         return {
             **Task._get_observations(self),
@@ -49,6 +53,10 @@ class VisualLocomotionTask(VisualExt, LocomotionTask):
     def __init__(self, cfg: VisualLocomotionTaskCfg, **kwargs):
         LocomotionTask.__init__(self, cfg, **kwargs)
         VisualExt.__init__(self, cfg, **kwargs)
+
+    def _reset_idx(self, env_ids: Sequence[int]):
+        Task._reset_idx(self, env_ids)
+        VisualExt._reset_idx(self, env_ids)
 
     def _get_observations(self) -> Dict[str, torch.Tensor]:
         return {

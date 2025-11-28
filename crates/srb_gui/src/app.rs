@@ -1,7 +1,7 @@
 use crate::cache::{self, EnvCache, ObjectCache, RobotCache, SceneryCache};
 use crate::env_cfg::{Domain, TaskConfig, Workflow};
 use crate::page::Page;
-use eframe::epaint::Color32;
+use egui::Color32;
 use egui_commonmark::{commonmark_str, CommonMarkCache};
 use r2r::std_msgs::msg::{Bool as BoolMsg, Empty as EmptyMsg, Float64 as Float64Msg};
 use r2r::QosProfile;
@@ -377,7 +377,7 @@ impl eframe::App for App {
 
         // Central panel
         crate::utils::egui::ScrollableFramedCentralPanel::builder()
-            .max_content_width(ctx.screen_rect().width())
+            .max_content_width(ctx.content_rect().width())
             .build()
             .show(ctx, |ui| {
                 match self.current_page {
@@ -624,7 +624,7 @@ impl App {
 
                                 let button = ui.add_sized(
                                     egui::Vec2::new(target_button_width, target_button_height),
-                                    egui::ImageButton::new(thumbnail).corner_radius(
+                                    egui::Button::image(thumbnail).corner_radius(
                                         0.01 * (target_button_height + target_button_width),
                                     ),
                                 );
@@ -731,7 +731,7 @@ impl App {
 
     fn configuration_page(&mut self, ui: &mut egui::Ui) {
         egui::ScrollArea::vertical().show(ui, |ui| {
-            let margin_x = (ui.ctx().screen_rect().width() - 768.0).max(0.0) / 2.0;
+            let margin_x = (ui.ctx().content_rect().width() - 768.0).max(0.0) / 2.0;
             let inner_margin = egui::Margin {
                 left: margin_x.max(0.0) as i8,
                 right: margin_x.max(0.0) as i8,
@@ -1557,7 +1557,7 @@ impl App {
                                      Screen size:  {:?}\n\
                                     ",
                             self.current_page,
-                            ui.ctx().screen_rect().size(),
+                            ui.ctx().content_rect().size(),
                         ))
                         .font(egui::FontId::monospace(
                             ui.style().text_styles[&egui::TextStyle::Button].size,

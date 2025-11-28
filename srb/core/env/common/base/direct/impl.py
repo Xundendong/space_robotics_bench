@@ -7,7 +7,7 @@ import torch
 from isaaclab.envs import DirectRLEnv as __DirectRLEnv
 
 from srb._typing import StepReturn
-from srb.core.asset import Articulation, RigidObject
+from srb.core.asset import Articulation, AssetBase, RigidObject
 from srb.core.manager import ActionManager
 from srb.core.sim.robot_setup import AssembledBodies, RobotAssembler
 from srb.utils import logging
@@ -43,6 +43,9 @@ class DirectEnv(__DirectRLEnv, metaclass=__PostInitCaller):
             print(self.action_manager)
 
         ## Get scene assets
+        self._scenery: AssetBase | None = (
+            self.scene["scenery"] if self.cfg.scenery is not None else None
+        )
         self._robot: Articulation = self.scene["robot"]
 
     def __post_init__(self):
@@ -337,10 +340,13 @@ class DirectEnv(__DirectRLEnv, metaclass=__PostInitCaller):
             super()._pre_physics_step(actions)  # type: ignore
 
     def _apply_action(self):
-        if self.cfg.actions:
-            self.action_manager.apply_action()
-        else:
-            super()._apply_action()  # type: ignore
+        try:
+            if self.cfg.actions:
+                self.action_manager.apply_action()
+            else:
+                super()._apply_action()  # type: ignore
+        except Exception as e:
+            logging.error(f"Failed to apply action: {e}")
 
     def _update_gym_env_spaces(self):
         # Action space

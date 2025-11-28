@@ -70,7 +70,7 @@ class TaskCfg(OrbitalEnvCfg):
 
     ## Time
     episode_length_s: float = 25.0
-    is_finite_horizon: bool = True
+    is_finite_horizon: bool = False
 
     ## Target offset
     target_offset_pos: Tuple[float, float, float] = (0.0, 0.0, 0.5)
@@ -236,8 +236,8 @@ def _compute_step_return(
     ## Rewards ##
     #############
     # Penalty: Action rate
-    WEIGHT_ACTION_RATE = -0.05
-    penalty_action_rate = WEIGHT_ACTION_RATE * torch.sum(
+    WEIGHT_ACTION_RATE = -0.5
+    penalty_action_rate = WEIGHT_ACTION_RATE * torch.mean(
         torch.square(act_current - act_previous), dim=1
     )
 

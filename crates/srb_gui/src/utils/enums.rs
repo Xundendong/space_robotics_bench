@@ -1,4 +1,4 @@
-use eframe::epaint::Color32;
+use egui::Color32;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum Difficulty {

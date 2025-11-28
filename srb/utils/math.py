@@ -150,3 +150,16 @@ def transform_points(
     quat: torch.Tensor | None = None,
 ) -> torch.Tensor:
     return _transform_points(points, pos, quat)
+
+
+@torch.jit.script
+def transform_nodal_pos(
+    nodal_pos: torch.Tensor,
+    pos: torch.Tensor | None = None,
+    quat: torch.Tensor | None = None,
+) -> torch.Tensor:
+    mean_nodal_pos = nodal_pos.median(dim=1, keepdim=True)[0]
+    return (
+        transform_points(nodal_pos - mean_nodal_pos, pos=pos, quat=quat)
+        + mean_nodal_pos
+    )
